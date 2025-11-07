@@ -62,15 +62,18 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="languageId" class="form-label">Langue (ID) <span class="text-danger">*</span></label>
-                                <input type="number"
-                                       class="form-control @error('languageId') is-invalid @enderror"
-                                       id="languageId"
-                                       name="languageId"
-                                       value="{{ old('languageId', 1) }}"
-                                       min="1"
-                                       required>
-                                <small class="form-text text-muted">Ex: 1 = Anglais, 2 = Français</small>
+                                <label for="languageId" class="form-label">Langue <span class="text-danger">*</span></label>
+                                <select class="form-select @error('languageId') is-invalid @enderror"
+                                        id="languageId"
+                                        name="languageId"
+                                        required>
+                                    <option value="">-- Choisir une langue --</option>
+                                    @foreach($languages as $id => $name)
+                                        <option value="{{ $id }}" {{ old('languageId', 1) == $id ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                 @error('languageId')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -163,12 +166,18 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="specialFeatures" class="form-label">Caractéristiques spéciales</label>
-                                <input type="text"
-                                       class="form-control @error('specialFeatures') is-invalid @enderror"
-                                       id="specialFeatures"
-                                       name="specialFeatures"
-                                       value="{{ old('specialFeatures') }}"
-                                       placeholder="Trailers, Commentaries, Deleted Scenes">
+                                <select class="form-select @error('specialFeatures') is-invalid @enderror"
+                                        id="specialFeatures"
+                                        name="specialFeatures[]"
+                                        multiple
+                                        size="4">
+                                    @foreach($specialFeatures as $value => $label)
+                                        <option value="{{ $value }}" {{ in_array($value, old('specialFeatures', [])) ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs options</small>
                                 @error('specialFeatures')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

@@ -32,25 +32,30 @@ class FilmController extends Controller
             abort(404, 'Film non trouvé');
         }
 
+        $languages = $this->getLanguages();
+        $specialFeatures = $this->getSpecialFeatures();
+
         return view('films.show', [
-            'film' => $film
+            'film' => $film,
+            'languages' => $languages,
+            'specialFeatures' => $specialFeatures
         ]);
     }
 
-    /**
-     * Affiche le formulaire de création d'un film
-     */
     public function create()
     {
-        return view('films.create');
+        $languages = $this->getLanguages();
+        $specialFeatures = $this->getSpecialFeatures();
+
+        return view('films.create', [
+            'languages' => $languages,
+            'specialFeatures' => $specialFeatures
+        ]);
     }
 
-    /**
-     * Enregistre un nouveau film via l'API Toad
-     */
     public function store(Request $request)
     {
-        // Validation des données
+
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -58,7 +63,8 @@ class FilmController extends Controller
             'languageId' => 'required|integer|min:1',
             'length' => 'nullable|integer|min:1|max:500',
             'rating' => 'nullable|string|in:G,PG,PG-13,R,NC-17',
-            'specialFeatures' => 'nullable|string|max:255',
+            'specialFeatures' => 'nullable|array',
+            'specialFeatures.*' => 'string',
             'rentalDuration' => 'required|integer|min:1|max:30',
             'rentalRate' => 'required|numeric|min:0',
             'replacementCost' => 'required|numeric|min:0',
@@ -75,7 +81,15 @@ class FilmController extends Controller
             'replacementCost.required' => 'Le coût de remplacement est obligatoire.',
         ]);
 
-        // Appel à l'API Toad
+        if (isset($validatedData['specialFeatures']) && is_array($validatedData['specialFeatures'])) {
+            $validatedData['specialFeatures'] = implode(',', $validatedData['specialFeatures']);
+        }
+
+        if (isset($validatedData['languageId'])) {
+            $validatedData['originalLanguageId'] = $validatedData['languageId'];
+            unset($validatedData['languageId']);
+        }
+
         $newFilm = $this->filmService->createFilm($validatedData);
 
         if ($newFilm) {
@@ -90,9 +104,6 @@ class FilmController extends Controller
             ->with('error', 'Erreur lors de la création du film. Veuillez réessayer.');
     }
 
-    /**
-     * Affiche le formulaire d'édition d'un film
-     */
     public function edit($id)
     {
         $film = $this->filmService->getFilmById($id);
@@ -101,25 +112,66 @@ class FilmController extends Controller
             abort(404, 'Film non trouvé');
         }
 
+        $languages = $this->getLanguages();
+        $specialFeatures = $this->getSpecialFeatures();
+
         return view('films.edit', [
-            'film' => $film
+            'film' => $film,
+            'languages' => $languages,
+            'specialFeatures' => $specialFeatures
         ]);
     }
 
-    /**
-     * Met à jour un film (désactivé pour l'instant)
-     */
     public function update(Request $request, $id)
     {
-        // Méthode désactivée volontairement
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'releaseYear' => 'required|integer|min:1900|max:2100',
+            'languageId' => 'required|integer|min:1',
+            'length' => 'nullable|integer|min:1|max:500',
+            'rating' => 'nullable|string|in:G,PG,PG-13,R,NC-17',
+            'specialFeatures' => 'nullable|array',
+            'specialFeatures.*' => 'string',
+            'rentalDuration' => 'required|integer|min:1|max:30',
+            'rentalRate' => 'required|numeric|min:0',
+            'replacementCost' => 'required|numeric|min:0',
+        ], [
+            'title.required' => 'Le titre est obligatoire.',
+            'title.max' => 'Le titre ne peut pas dépasser 255 caractères.',
+            'releaseYear.required' => 'L\'année de sortie est obligatoire.',
+            'releaseYear.min' => 'L\'année doit être supérieure ou égale à 1900.',
+            'releaseYear.max' => 'L\'année ne peut pas dépasser 2100.',
+            'languageId.required' => 'La langue est obligatoire.',
+            'rating.in' => 'La note doit être G, PG, PG-13, R ou NC-17.',
+            'rentalDuration.required' => 'La durée de location est obligatoire.',
+            'rentalRate.required' => 'Le tarif de location est obligatoire.',
+            'replacementCost.required' => 'Le coût de remplacement est obligatoire.',
+        ]);
+
+        if (isset($validatedData['specialFeatures']) && is_array($validatedData['specialFeatures'])) {
+            $validatedData['specialFeatures'] = implode(',', $validatedData['specialFeatures']);
+        }
+
+        if (isset($validatedData['languageId'])) {
+            $validatedData['originalLanguageId'] = $validatedData['languageId'];
+            unset($validatedData['languageId']);
+        }
+
+        $updatedFilm = $this->filmService->updateFilm($id, $validatedData);
+
+        if ($updatedFilm) {
+            return redirect()
+                ->route('films.show', $updatedFilm['filmId'] ?? $updatedFilm['id'])
+                ->with('success', 'Film mis à jour avec succès !');
+        }
+
         return redirect()
             ->back()
-            ->with('info', 'La mise à jour des films n\'est pas encore activée.');
+            ->withInput()
+            ->with('error', 'Erreur lors de la mise à jour du film. Veuillez réessayer.');
     }
 
-    /**
-     * Supprime un film via l'API Toad
-     */
     public function destroy($id)
     {
         $success = $this->filmService->deleteFilm($id);
@@ -133,5 +185,29 @@ class FilmController extends Controller
         return redirect()
             ->back()
             ->with('error', 'Erreur lors de la suppression du film. Veuillez réessayer.');
+    }
+
+    private function getLanguages(): array
+    {
+        return [
+            1 => 'Anglais',
+            2 => 'Français',
+            3 => 'Espagnol',
+            4 => 'Allemand',
+            5 => 'Italien',
+            6 => 'Japonais',
+            7 => 'Mandarin',
+            8 => 'Portugais',
+        ];
+    }
+
+    private function getSpecialFeatures(): array
+    {
+        return [
+            'Trailers' => 'Bandes-annonces',
+            'Commentaries' => 'Commentaires',
+            'Deleted Scenes' => 'Scènes supprimées',
+            'Behind the Scenes' => 'Coulisses',
+        ];
     }
 }

@@ -22,7 +22,6 @@ class ToadFilmService
         try {
             $headers = ['Accept' => 'application/json'];
             
-            // Récupère le token JWT depuis la session
             $token = $this->getUserToken();
             if ($token) {
                 $headers['Authorization'] = "Bearer {$token}";
@@ -72,9 +71,6 @@ class ToadFilmService
         }
     }
 
-    /**
-     * Crée un nouveau film via l'API Toad
-     */
     public function createFilm(array $data): ?array
     {
         $url = $this->baseUrl . '/films';
@@ -101,7 +97,6 @@ class ToadFilmService
                 return $response->json();
             }
 
-            // Log détaillé de l'erreur avec le message de l'API
             $errorBody = $response->body();
             $errorJson = $response->json();
             Log::warning('Création film KO', [
@@ -117,9 +112,6 @@ class ToadFilmService
         }
     }
 
-    /**
-     * Supprime un film via l'API Toad
-     */
     public function deleteFilm(int $id): bool
     {
         $url = $this->baseUrl . '/films/' . $id;
@@ -151,20 +143,47 @@ class ToadFilmService
         }
     }
 
-    /**
-     * TODO: Méthode à implémenter plus tard pour la mise à jour
-     * Devra envoyer PUT {baseUrl}/films/{id} avec les données en JSON
-     *
-     * public function updateFilm(int $id, array $data): ?array
-     * {
-     *     $url = $this->baseUrl . '/films/' . $id;
-     *     // ... requête PUT avec $data
-     * }
-     */
+    public function updateFilm(int $id, array $data): ?array
+    {
+        $url = $this->baseUrl . '/films/' . $id;
 
-    /**
-     * Récupère le token JWT depuis la session utilisateur
-     */
+        try {
+            $headers = [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+            ];
+
+            $token = $this->getUserToken();
+            if ($token) {
+                $headers['Authorization'] = "Bearer {$token}";
+            }
+
+            Log::info('Mise à jour film via API', ['url' => $url, 'data' => $data]);
+
+            $response = Http::withHeaders($headers)
+                ->timeout(10)
+                ->put($url, $data);
+
+            if ($response->successful()) {
+                Log::info('Film mis à jour avec succès', ['response' => $response->json()]);
+                return $response->json();
+            }
+
+            $errorBody = $response->body();
+            $errorJson = $response->json();
+            Log::warning('Mise à jour film KO', [
+                'status' => $response->status(),
+                'body' => $errorBody,
+                'json' => $errorJson,
+                'headers' => $response->headers()
+            ]);
+            return null;
+        } catch (\Throwable $e) {
+            Log::error('Erreur mise à jour film', ['msg' => $e->getMessage()]);
+            return null;
+        }
+    }
+
     private function getUserToken(): ?string
     {
         $userData = session('toad_user');

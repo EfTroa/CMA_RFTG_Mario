@@ -13,11 +13,6 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle"></i>
-                        <strong>Note :</strong> La modification des films n'est pas encore activée. Vous pouvez visualiser les champs pré-remplis, mais le bouton de sauvegarde est désactivé pour le moment.
-                    </div>
-
                     <form action="{{ route('films.update', $film['filmId'] ?? $film['id']) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -68,15 +63,21 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="languageId" class="form-label">Langue (ID) <span class="text-danger">*</span></label>
-                                <input type="number"
-                                       class="form-control @error('languageId') is-invalid @enderror"
-                                       id="languageId"
-                                       name="languageId"
-                                       value="{{ old('languageId', $film['languageId'] ?? 1) }}"
-                                       min="1"
-                                       required>
-                                <small class="form-text text-muted">Ex: 1 = Anglais, 2 = Français</small>
+                                <label for="languageId" class="form-label">Langue <span class="text-danger">*</span></label>
+                                @php
+                                    $currentLangId = old('languageId', $film['languageId'] ?? $film['originalLanguageId'] ?? 1);
+                                @endphp
+                                <select class="form-select @error('languageId') is-invalid @enderror"
+                                        id="languageId"
+                                        name="languageId"
+                                        required>
+                                    <option value="">-- Choisir une langue --</option>
+                                    @foreach($languages as $id => $name)
+                                        <option value="{{ $id }}" {{ $currentLangId == $id ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                 @error('languageId')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -169,12 +170,22 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="specialFeatures" class="form-label">Caractéristiques spéciales</label>
-                                <input type="text"
-                                       class="form-control @error('specialFeatures') is-invalid @enderror"
-                                       id="specialFeatures"
-                                       name="specialFeatures"
-                                       value="{{ old('specialFeatures', $film['specialFeatures'] ?? '') }}"
-                                       placeholder="Trailers, Commentaries, Deleted Scenes">
+                                @php
+                                    $selectedFeatures = old('specialFeatures', isset($film['specialFeatures']) ? explode(',', $film['specialFeatures']) : []);
+                                    $selectedFeatures = array_map('trim', $selectedFeatures);
+                                @endphp
+                                <select class="form-select @error('specialFeatures') is-invalid @enderror"
+                                        id="specialFeatures"
+                                        name="specialFeatures[]"
+                                        multiple
+                                        size="4">
+                                    @foreach($specialFeatures as $value => $label)
+                                        <option value="{{ $value }}" {{ in_array($value, $selectedFeatures) ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs options</small>
                                 @error('specialFeatures')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -187,8 +198,8 @@
                             <a href="{{ route('films.show', $film['filmId'] ?? $film['id']) }}" class="btn btn-secondary">
                                 <i class="bi bi-x-circle"></i> Annuler
                             </a>
-                            <button type="submit" class="btn btn-warning" disabled title="Fonctionnalité désactivée">
-                                <i class="bi bi-save"></i> Enregistrer les modifications (désactivé)
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Enregistrer les modifications
                             </button>
                         </div>
                     </form>

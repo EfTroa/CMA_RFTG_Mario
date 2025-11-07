@@ -35,7 +35,12 @@
                         <dd class="col-sm-9">{{ $film['releaseYear'] ?? 'N/A' }}</dd>
 
                         <dt class="col-sm-3">Langue</dt>
-                        <dd class="col-sm-9">ID {{ $film['languageId'] ?? 'N/A' }}</dd>
+                        <dd class="col-sm-9">
+                            @php
+                                $langId = $film['languageId'] ?? $film['originalLanguageId'] ?? null;
+                            @endphp
+                            {{ $langId && isset($languages[$langId]) ? $languages[$langId] : 'N/A' }}
+                        </dd>
 
                         <dt class="col-sm-3">Durée</dt>
                         <dd class="col-sm-9">{{ $film['length'] ?? 'N/A' }} minutes</dd>
@@ -47,7 +52,21 @@
                         <dd class="col-sm-9">{{ $film['rating'] ?? 'N/A' }}</dd>
 
                         <dt class="col-sm-3">Caractéristiques spéciales</dt>
-                        <dd class="col-sm-9">{{ $film['specialFeatures'] ?? 'Aucune' }}</dd>
+                        <dd class="col-sm-9">
+                            @if(isset($film['specialFeatures']) && $film['specialFeatures'])
+                                @php
+                                    $features = explode(',', $film['specialFeatures']);
+                                    $translatedFeatures = [];
+                                    foreach ($features as $feature) {
+                                        $feature = trim($feature);
+                                        $translatedFeatures[] = $specialFeatures[$feature] ?? $feature;
+                                    }
+                                @endphp
+                                {{ implode(', ', $translatedFeatures) }}
+                            @else
+                                Aucune
+                            @endif
+                        </dd>
 
                         <dt class="col-sm-3">Dernière mise à jour</dt>
                         <dd class="col-sm-9">{{ $film['lastUpdate'] ?? 'N/A' }}</dd>

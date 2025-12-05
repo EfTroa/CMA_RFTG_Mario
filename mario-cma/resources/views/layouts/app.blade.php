@@ -41,6 +41,11 @@
                                     Gestion du catalogue de films
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('dvds.*') ? 'active' : '' }}" href="{{ route('dvds.index') }}">
+                                    Gestion des stocks DVD
+                                </a>
+                            </li>
                         @endauth
                     </ul>
 
@@ -122,5 +127,7 @@
             @yield('content')
         </main>
     </div>
+
+    @yield('scripts')
 </body>
 </html>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\FilmController;
+use App\Http\Controllers\InventoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,4 +35,23 @@ Route::middleware('auth')->group(function () {
 
     // Suppression d'un film
     Route::delete('/films/{id}', [FilmController::class, 'destroy'])->name('films.destroy');
+
+    // Routes DVDs (Inventory management)
+    // Liste des films avec gestion DVD
+    Route::get('/dvds', [InventoryController::class, 'index'])->name('dvds.index');
+
+    // Affichage des DVDs pour un film spécifique
+    Route::get('/dvds/film/{filmId}', [InventoryController::class, 'show'])->name('dvds.show');
+
+    // Création d'un DVD (ajout à un film)
+    Route::post('/dvds', [InventoryController::class, 'store'])->name('dvds.store');
+
+    // Formulaire d'édition d'un DVD
+    Route::get('/dvds/{inventoryId}/edit', [InventoryController::class, 'edit'])->name('dvds.edit');
+
+    // Mise à jour d'un DVD (migration de store)
+    Route::put('/dvds/{inventoryId}', [InventoryController::class, 'update'])->name('dvds.update');
+
+    // Suppression d'un DVD
+    Route::delete('/dvds/{inventoryId}', [InventoryController::class, 'destroy'])->name('dvds.destroy');
 });

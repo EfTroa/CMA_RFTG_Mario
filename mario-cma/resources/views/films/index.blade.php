@@ -51,12 +51,12 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <a href="{{ route('films.show', $film['filmId'] ?? $film['id']) }}"
-                                                       class="btn btn-sm btn-info" title="Voir">
-                                                        <i class="bi bi-eye"></i>
+                                                       class="btn btn-sm btn-info">
+                                                        Voir
                                                     </a>
                                                     <a href="{{ route('films.edit', $film['filmId'] ?? $film['id']) }}"
-                                                       class="btn btn-sm btn-warning" title="Modifier">
-                                                        <i class="bi bi-pencil"></i>
+                                                       class="btn btn-sm btn-warning">
+                                                        Modifier
                                                     </a>
                                                     <form action="{{ route('films.destroy', $film['filmId'] ?? $film['id']) }}"
                                                           method="POST"
@@ -64,8 +64,8 @@
                                                           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce film ?')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
-                                                            <i class="bi bi-trash"></i>
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            Supprimer
                                                         </button>
                                                     </form>
                                                 </div>

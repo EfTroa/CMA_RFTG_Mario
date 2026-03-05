@@ -29,33 +29,30 @@ class LoginController extends Controller
         $this->validateLogin($request);
 
         $resp = $this->toadAuth->verify(
-            $request->input('email'),
+            $request->input('username'),
             $request->input('password')
         );
 
         if (!$resp) {
             throw ValidationException::withMessages([
-                'email' => [trans('auth.failed')],
+                'username' => [trans('auth.failed')],
             ]);
         }
 
-        // Selon votre API: { token, type, staff:{...} } ou directement { ...staff... }
-        $staff = $resp['staff'] ?? $resp;
+        $username = $request->input('username');
 
         $userData = [
-            'id'        => $staff['staffId'] ?? $staff['id'] ?? $staff['email'],
-            'email'     => $staff['email'] ?? null,
-            'name'      => $staff['name']
-                           ?? trim(($staff['first_name'] ?? '').' '.($staff['last_name'] ?? ''))
-                           ?: ($staff['email'] ?? 'Utilisateur'),
-            'token'     => $resp['token'] ?? $resp['access_token'] ?? null, // token JWT Toad si renvoyé
-            'staff'     => $staff, // on garde toutes les infos utiles
+            'id'        => $username,
+            'email'     => null,
+            'name'      => $username,
+            'token'     => $resp['token'] ?? null,
+            'staff'     => ['username' => $username],
         ];
 
-        // Enregistrer l’utilisateur en session
+        // Enregistrer l'utilisateur en session
         $request->session()->put('toad_user', $userData);
 
-        // Connecter un utilisateur “en mémoire”
+        // Connecter un utilisateur "en mémoire"
         $user = new ToadUser($userData);
         Auth::login($user, false); // éviter remember me (non supporté par ce provider)
 
@@ -65,7 +62,7 @@ class LoginController extends Controller
     protected function validateLogin(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
     }

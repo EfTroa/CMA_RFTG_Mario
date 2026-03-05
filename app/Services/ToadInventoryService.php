@@ -20,7 +20,7 @@ class ToadInventoryService
      */
     public function getInventoriesByFilmId(int $filmId): ?array
     {
-        $url = $this->baseUrl . '/films/' . $filmId . '/inventories';
+        $url = $this->baseUrl . '/inventories/available/film/' . $filmId;
 
         try {
             $headers = ['Accept' => 'application/json'];
@@ -204,7 +204,7 @@ class ToadInventoryService
      */
     public function checkInventoryAvailability(int $inventoryId): ?array
     {
-        $url = $this->baseUrl . '/inventories/' . $inventoryId . '/availability';
+        $url = $this->baseUrl . '/inventories/checkIfDVDIsAvailable/' . $inventoryId;
 
         try {
             $headers = ['Accept' => 'application/json'];
@@ -220,7 +220,9 @@ class ToadInventoryService
                 ->get($url);
 
             if ($response->successful()) {
-                return $response->json();
+                // L'API Toad retourne un boolean, on le convertit en array
+                $isAvailable = $response->json();
+                return ['available' => $isAvailable];
             }
 
             return null;

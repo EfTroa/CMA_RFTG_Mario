@@ -6,17 +6,17 @@
         <div class="col-md-10">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Détails du film</h5>
+                    <h5 class="mb-0">Film Details</h5>
                     <a href="{{ route('films.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                        <i class="bi bi-arrow-left"></i> Back to List
                     </a>
                 </div>
 
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
-                            <h3>{{ $film['title'] ?? 'Sans titre' }}</h3>
-                            <p class="text-muted">{{ $film['description'] ?? 'Aucune description disponible.' }}</p>
+                            <h3>{{ $film['title'] ?? 'Untitled' }}</h3>
+                            <p class="text-muted">{{ $film['description'] ?? 'No description available.' }}</p>
                         </div>
                         <div class="col-md-4 text-end">
                             @if(isset($film['rating']))
@@ -31,10 +31,10 @@
                         <dt class="col-sm-3">ID</dt>
                         <dd class="col-sm-9">{{ $film['filmId'] ?? $film['id'] ?? 'N/A' }}</dd>
 
-                        <dt class="col-sm-3">Année de sortie</dt>
+                        <dt class="col-sm-3">Release Year</dt>
                         <dd class="col-sm-9">{{ $film['releaseYear'] ?? 'N/A' }}</dd>
 
-                        <dt class="col-sm-3">Langue</dt>
+                        <dt class="col-sm-3">Language</dt>
                         <dd class="col-sm-9">
                             @php
                                 $langId = $film['languageId'] ?? $film['originalLanguageId'] ?? null;
@@ -42,16 +42,15 @@
                             {{ $langId && isset($languages[$langId]) ? $languages[$langId] : 'N/A' }}
                         </dd>
 
-                        <dt class="col-sm-3">Durée</dt>
+                        <dt class="col-sm-3">Duration</dt>
                         <dd class="col-sm-9">{{ $film['length'] ?? 'N/A' }} minutes</dd>
 
-                        <dt class="col-sm-3">Coût de remplacement</dt>
-                        <dd class="col-sm-9">{{ $film['replacementCost'] ?? 'N/A' }} €</dd>
+                        <input type="hidden" name="replacementCost" value="{{ $film['replacementCost'] }}">
 
-                        <dt class="col-sm-3">Note</dt>
+                        <dt class="col-sm-3">Rating</dt>
                         <dd class="col-sm-9">{{ $film['rating'] ?? 'N/A' }}</dd>
 
-                        <dt class="col-sm-3">Caractéristiques spéciales</dt>
+                        <dt class="col-sm-3">Special Features</dt>
                         <dd class="col-sm-9">
                             @if(isset($film['specialFeatures']) && $film['specialFeatures'])
                                 @php
@@ -64,11 +63,11 @@
                                 @endphp
                                 {{ implode(', ', $translatedFeatures) }}
                             @else
-                                Aucune
+                                None
                             @endif
                         </dd>
 
-                        <dt class="col-sm-3">Dernière mise à jour</dt>
+                        <dt class="col-sm-3">Last Updated</dt>
                         <dd class="col-sm-9">{{ $film['lastUpdate'] ?? 'N/A' }}</dd>
                     </dl>
 
@@ -76,16 +75,16 @@
 
                     <div class="d-flex gap-2">
                         <a href="{{ route('films.edit', $film['filmId'] ?? $film['id']) }}" class="btn btn-warning">
-                            <i class="bi bi-pencil"></i> Modifier
+                            <i class="bi bi-pencil"></i> Edit
                         </a>
                         <form action="{{ route('films.destroy', $film['filmId'] ?? $film['id']) }}"
                               method="POST"
                               class="d-inline"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce film ?')">
+                              onsubmit="return confirm('Are you sure you want to delete this film?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash"></i> Supprimer
+                                <i class="bi bi-trash"></i> Delete
                             </button>
                         </form>
                     </div>

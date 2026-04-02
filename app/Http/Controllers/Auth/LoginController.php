@@ -47,6 +47,7 @@ class LoginController extends Controller
             'name'      => $username,
             'token'     => $resp['token'] ?? null,
             'staff'     => ['username' => $username],
+            'remember_token' => null,
         ];
 
         // Enregistrer l'utilisateur en session

@@ -15,13 +15,24 @@ class FilmController extends Controller
         $this->filmService = $filmService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $films = $this->filmService->getAllFilms();
+        $perPage = 20;
+        $page    = $request->get('page', 1);
+        $offset  = ($page - 1) * $perPage;
 
-        return view('films.index', [
-            'films' => $films ?? []
-        ]);
+        $films = $this->filmService->getAllFilms($perPage, $offset);
+        $total = $this->filmService->getCountFilms();
+
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $films ?? [],
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url()]
+        );
+
+        return view('films.index', ['films' => $paginator]);
     }
 
     public function show($id)

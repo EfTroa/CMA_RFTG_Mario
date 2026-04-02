@@ -7,10 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="bi bi-pencil"></i> Modifier le DVD
+                        <i class="bi bi-pencil"></i> Edit DVD
                     </h5>
                     <a href="{{ route('dvds.show', $film['filmId'] ?? $film['id']) }}" class="btn btn-secondary btn-sm">
-                        <i class="bi bi-arrow-left"></i> Retour
+                        <i class="bi bi-arrow-left"></i> Back
                     </a>
                 </div>
 
@@ -22,20 +22,20 @@
                         </div>
                     @endif
 
-                    <!-- Informations du DVD -->
+                    <!-- DVD Information -->
                     <div class="alert alert-info mb-4">
                         <h6 class="alert-heading">
-                            <i class="bi bi-info-circle"></i> Informations du DVD
+                            <i class="bi bi-info-circle"></i> DVD Information
                         </h6>
                         <hr>
                         <div class="row">
                             <div class="col-md-6">
-                                <p class="mb-1"><strong>ID DVD :</strong> #{{ $inventory['inventoryId'] ?? $inventory['id'] ?? 'N/A' }}</p>
-                                <p class="mb-1"><strong>Film :</strong> {{ $film['title'] ?? 'Sans titre' }}</p>
+                                <p class="mb-1"><strong>DVD ID:</strong> #{{ $inventory['inventoryId'] ?? $inventory['id'] ?? 'N/A' }}</p>
+                                <p class="mb-1"><strong>Film:</strong> {{ $film['title'] ?? 'Untitled' }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-1"><strong>Année :</strong> {{ $film['releaseYear'] ?? 'N/A' }}</p>
-                                <p class="mb-0"><strong>Store actuel :</strong> Store #{{ $inventory['storeId'] ?? 'N/A' }}</p>
+                                <p class="mb-1"><strong>Year:</strong> {{ $film['releaseYear'] ?? 'N/A' }}</p>
+                                <p class="mb-0"><strong>Current Store:</strong> Store #{{ $inventory['storeId'] ?? 'N/A' }}</p>
                             </div>
                         </div>
                     </div>
@@ -46,17 +46,17 @@
 
                         <div class="mb-3">
                             <label for="storeId" class="form-label">
-                                <strong>Nouveau Store</strong> <span class="text-danger">*</span>
+                                <strong>New Store</strong> <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('storeId') is-invalid @enderror"
                                     id="storeId"
                                     name="storeId"
                                     required>
-                                <option value="">-- Sélectionner un store --</option>
+                                <option value="">-- Select a store --</option>
                                 @foreach($stores as $store)
                                     <option value="{{ $store['storeId'] ?? $store['id'] }}"
                                             {{ (old('storeId', $inventory['storeId']) == ($store['storeId'] ?? $store['id'])) ? 'selected' : '' }}>
-                                        Store #{{ $store['storeId'] ?? $store['id'] }} - {{ $store['address'] ?? 'Adresse non disponible' }}
+                                        Store #{{ $store['storeId'] ?? $store['id'] }} - {{ $store['address'] ?? 'Address not available' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -65,21 +65,21 @@
                             @enderror
                             <div class="form-text">
                                 <i class="bi bi-info-circle"></i>
-                                Sélectionnez le nouveau store où migrer ce DVD
+                                Select the new store to transfer this DVD to
                             </div>
                         </div>
 
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle"></i>
-                            <strong>Attention :</strong> La modification du store permet de migrer physiquement le DVD vers un autre magasin.
+                            <strong>Warning:</strong> Changing the store will physically transfer the DVD to another location.
                         </div>
 
                         <div class="d-flex justify-content-between">
                             <a href="{{ route('dvds.show', $film['filmId'] ?? $film['id']) }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Annuler
+                                <i class="bi bi-x-circle"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Mettre à jour
+                                <i class="bi bi-check-circle"></i> Update
                             </button>
                         </div>
                     </form>

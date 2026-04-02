@@ -15,13 +15,13 @@ class ToadFilmService
         $this->baseUrl = rtrim((string) config('services.toad.url', 'http://localhost:8180'), '/');
     }
 
-    public function getAllFilms(): ?array
+    public function getAllFilms(int $limit = 20, int $offset = 0): ?array
     {
         $url = $this->baseUrl . '/films';
 
         try {
             $headers = ['Accept' => 'application/json'];
-            
+
             $token = $this->getUserToken();
             if ($token) {
                 $headers['Authorization'] = "Bearer {$token}";
@@ -31,7 +31,7 @@ class ToadFilmService
 
             $response = Http::withHeaders($headers)
                 ->timeout(10)
-                ->get($url);
+                ->get($url, ['limit' => $limit, 'offset' => $offset]);
 
             if ($response->successful()) {
                 return $response->json();
@@ -42,6 +42,30 @@ class ToadFilmService
         } catch (\Throwable $e) {
             Log::error('Erreur API Films', ['msg' => $e->getMessage()]);
             return null;
+        }
+    }
+
+    public function getCountFilms(): int
+    {
+        $url = $this->baseUrl . '/films/count';
+
+        try {
+            $headers = ['Accept' => 'application/json'];
+            $token = $this->getUserToken();
+            if ($token) {
+                $headers['Authorization'] = "Bearer {$token}";
+            }
+
+            $response = Http::withHeaders($headers)->timeout(10)->get($url);
+
+            if ($response->successful()) {
+                return (int) $response->body();
+            }
+
+            return 0;
+        } catch (\Throwable $e) {
+            Log::error('Erreur count Films', ['msg' => $e->getMessage()]);
+            return 0;
         }
     }
 

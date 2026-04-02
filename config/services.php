@@ -35,6 +35,7 @@ return [
         ],
     ],
 /** Service pour API Toad */
+/** Service pour API Toad */
     'toad' => [
     'url' => env('TOAD_API_URL').':'.env('TOAD_API_PORT'),
     'token' => env('TOAD_API_TOKEN'),

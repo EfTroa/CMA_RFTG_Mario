@@ -8,17 +8,17 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="bi bi-disc"></i>
-                        DVDs pour : <strong>{{ $film['title'] ?? 'Film inconnu' }}</strong>
+                        DVDs for: <strong>{{ $film['title'] ?? 'Unknown Film' }}</strong>
                     </h5>
                     <div>
                         <button type="button"
                                 class="btn btn-primary btn-sm"
                                 data-bs-toggle="modal"
                                 data-bs-target="#addDvdModal">
-                            <i class="bi bi-plus-circle"></i> Ajouter DVD
+                            <i class="bi bi-plus-circle"></i> Add DVD
                         </button>
                         <a href="{{ route('dvds.index') }}" class="btn btn-secondary btn-sm">
-                            <i class="bi bi-arrow-left"></i> Retour
+                            <i class="bi bi-arrow-left"></i> Back
                         </a>
                     </div>
                 </div>
@@ -38,22 +38,22 @@
                         </div>
                     @endif
 
-                    <!-- Informations du film -->
+                    <!-- Film information -->
                     <div class="alert alert-info mb-4">
                         <div class="row">
                             <div class="col-md-6">
-                                <p class="mb-1"><strong>Année :</strong> {{ $film['releaseYear'] ?? 'N/A' }}</p>
-                                <p class="mb-1"><strong>Durée :</strong> {{ $film['length'] ?? 'N/A' }} min</p>
+                                <p class="mb-1"><strong>Year:</strong> {{ $film['releaseYear'] ?? 'N/A' }}</p>
+                                <p class="mb-1"><strong>Duration:</strong> {{ $film['length'] ?? 'N/A' }} min</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-1"><strong>Note :</strong>
+                                <p class="mb-1"><strong>Rating:</strong>
                                     @if(isset($film['rating']))
                                         <span class="badge bg-info">{{ $film['rating'] }}</span>
                                     @else
                                         <span class="badge bg-secondary">N/A</span>
                                     @endif
                                 </p>
-                                <p class="mb-0"><strong>Total DVDs :</strong> {{ count($inventories) }}</p>
+                                <p class="mb-0"><strong>Total DVDs:</strong> {{ count($inventories) }}</p>
                             </div>
                         </div>
                     </div>
@@ -61,17 +61,17 @@
                     @if (empty($inventories))
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle"></i>
-                            Aucun DVD disponible pour ce film.
+                            No DVDs available for this film.
                         </div>
                     @else
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>ID DVD</th>
-                                        <th>Titre du film</th>
-                                        <th>ID Store</th>
-                                        <th>Disponibilité</th>
+                                        <th>DVD ID</th>
+                                        <th>Film Title</th>
+                                        <th>Store ID</th>
+                                        <th>Availability</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -79,7 +79,7 @@
                                     @foreach ($inventories as $inventory)
                                         <tr>
                                             <td><strong>#{{ $inventory['inventoryId'] ?? $inventory['id'] ?? 'N/A' }}</strong></td>
-                                            <td>{{ $film['title'] ?? 'Sans titre' }}</td>
+                                            <td>{{ $film['title'] ?? 'Untitled' }}</td>
                                             <td>
                                                 <span class="badge bg-secondary">
                                                     Store #{{ $inventory['storeId'] ?? 'N/A' }}
@@ -88,11 +88,11 @@
                                             <td>
                                                 @if(isset($inventory['available']) && $inventory['available'])
                                                     <span class="badge bg-success">
-                                                        <i class="bi bi-check-circle"></i> Disponible
+                                                        <i class="bi bi-check-circle"></i> Available
                                                     </span>
                                                 @else
                                                     <span class="badge bg-danger">
-                                                        <i class="bi bi-x-circle"></i> En location
+                                                        <i class="bi bi-x-circle"></i> On Rental
                                                     </span>
                                                 @endif
                                             </td>
@@ -100,7 +100,7 @@
                                                 <div class="btn-group" role="group">
                                                     <a href="{{ route('dvds.edit', $inventory['inventoryId'] ?? $inventory['id']) }}"
                                                        class="btn btn-sm btn-warning">
-                                                        Modifier
+                                                        Edit
                                                     </a>
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger"
@@ -108,7 +108,7 @@
                                                             data-bs-target="#deleteDvdModal"
                                                             data-inventory-id="{{ $inventory['inventoryId'] ?? $inventory['id'] }}"
                                                             data-inventory-available="{{ $inventory['available'] ? 'true' : 'false' }}">
-                                                        Supprimer
+                                                        Delete
                                                     </button>
                                                 </div>
                                             </td>
@@ -121,7 +121,7 @@
                         <div class="mt-3">
                             <p class="text-muted">
                                 <i class="bi bi-info-circle"></i>
-                                Total : <strong>{{ count($inventories) }}</strong> DVD(s) pour ce film
+                                Total: <strong>{{ count($inventories) }}</strong> DVD(s) for this film
                             </p>
                         </div>
                     @endif
@@ -131,22 +131,22 @@
     </div>
 </div>
 
-<!-- Modal pour ajouter un DVD -->
+<!-- Modal: Add a DVD -->
 <div class="modal fade" id="addDvdModal" tabindex="-1" aria-labelledby="addDvdModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="{{ route('dvds.store') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addDvdModalLabel">Ajouter un DVD</h5>
+                    <h5 class="modal-title" id="addDvdModalLabel">Add a DVD</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="filmId" value="{{ $film['filmId'] ?? $film['id'] }}">
 
                     <div class="mb-3">
-                        <label class="form-label"><strong>Film :</strong></label>
-                        <p class="text-muted">{{ $film['title'] ?? 'Sans titre' }}</p>
+                        <label class="form-label"><strong>Film:</strong></label>
+                        <p class="text-muted">{{ $film['title'] ?? 'Untitled' }}</p>
                     </div>
 
                     <div class="mb-3">
@@ -155,10 +155,10 @@
                                 id="storeId"
                                 name="storeId"
                                 required>
-                            <option value="">-- Sélectionner un store --</option>
+                            <option value="">-- Select a store --</option>
                             @foreach($stores as $store)
                                 <option value="{{ $store['storeId'] ?? $store['id'] }}">
-                                    Store #{{ $store['storeId'] ?? $store['id'] }} - {{ $store['address'] ?? 'Adresse non disponible' }}
+                                    Store #{{ $store['storeId'] ?? $store['id'] }} - {{ $store['address'] ?? 'Address not available' }}
                                 </option>
                             @endforeach
                         </select>
@@ -166,14 +166,14 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <div class="form-text">
-                            <i class="bi bi-info-circle"></i> Sélectionnez le store où ce DVD sera disponible
+                            <i class="bi bi-info-circle"></i> Select the store where this DVD will be available
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Ajouter
+                        <i class="bi bi-plus-circle"></i> Add
                     </button>
                 </div>
             </form>
@@ -181,7 +181,7 @@
     </div>
 </div>
 
-<!-- Modal pour supprimer un DVD -->
+<!-- Modal: Delete a DVD -->
 <div class="modal fade" id="deleteDvdModal" tabindex="-1" aria-labelledby="deleteDvdModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -190,21 +190,21 @@
                 @method('DELETE')
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="deleteDvdModalLabel">
-                        <i class="bi bi-exclamation-triangle"></i> Confirmer la suppression
+                        <i class="bi bi-exclamation-triangle"></i> Confirm Deletion
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="deleteMessage">Êtes-vous sûr de vouloir supprimer ce DVD ?</p>
+                    <p id="deleteMessage">Are you sure you want to delete this DVD?</p>
                     <p id="deleteWarning" class="text-danger small" style="display: none;">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        <strong>Attention :</strong> Ce DVD a un historique de location. La suppression supprimera également l'historique associé.
+                        <strong>Warning:</strong> This DVD has a rental history. Deleting it will also remove the associated history.
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash"></i> Supprimer
+                        <i class="bi bi-trash"></i> Delete
                     </button>
                 </div>
             </form>
@@ -216,7 +216,7 @@
 
 @section('scripts')
 <script>
-    // Script pour gérer la suppression de DVD
+    // Handle DVD deletion modal
     document.addEventListener('DOMContentLoaded', function() {
         const deleteDvdModal = document.getElementById('deleteDvdModal');
 
@@ -228,8 +228,8 @@
             const form = document.getElementById('deleteDvdForm');
             form.action = "{{ route('dvds.destroy', ':id') }}".replace(':id', inventoryId);
 
-            // Afficher un avertissement si le DVD a été loué (logique simplifiée)
-            // Dans un cas réel, cette info devrait venir du backend
+            // Show a warning if the DVD has been rented (simplified logic)
+            // In a real-world case this information should come from the backend
             const deleteWarning = document.getElementById('deleteWarning');
             if (available === 'false') {
                 deleteWarning.style.display = 'block';

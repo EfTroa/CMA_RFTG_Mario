@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Gestion des stocks DVD</h5>
+                    <h5 class="mb-0">DVD Stock Management</h5>
                 </div>
 
                 <div class="card-body">
@@ -27,26 +27,26 @@
                     @if (empty($films))
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle"></i>
-                            Aucun film disponible ou erreur lors de la récupération des données de l'API.
+                            No films available or an error occurred while retrieving data from the API.
                         </div>
                     @else
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Titre</th>
+                                        <th>Title</th>
                                         <th>Description</th>
-                                        <th>Année</th>
-                                        <th>Durée</th>
-                                        <th>Nombre de DVDs</th>
+                                        <th>Year</th>
+                                        <th>Duration</th>
+                                        <th>Number of DVDs</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($films as $film)
                                         <tr style="cursor: pointer;" onclick="window.location='{{ route('dvds.show', $film['filmId'] ?? $film['id']) }}'">
-                                            <td><strong>{{ $film['title'] ?? 'Sans titre' }}</strong></td>
-                                            <td>{{ Str::limit($film['description'] ?? 'Aucune description', 80) }}</td>
+                                            <td><strong>{{ $film['title'] ?? 'Untitled' }}</strong></td>
+                                            <td>{{ Str::limit($film['description'] ?? 'No description', 80) }}</td>
                                             <td>{{ $film['releaseYear'] ?? 'N/A' }}</td>
                                             <td>{{ $film['length'] ?? 'N/A' }} min</td>
                                             <td>
@@ -60,8 +60,8 @@
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#addDvdModal"
                                                         data-film-id="{{ $film['filmId'] ?? $film['id'] }}"
-                                                        data-film-title="{{ $film['title'] ?? 'Sans titre' }}">
-                                                    <i class="bi bi-plus-circle"></i> Ajouter DVD
+                                                        data-film-title="{{ $film['title'] ?? 'Untitled' }}">
+                                                    <i class="bi bi-plus-circle"></i> Add DVD
                                                 </button>
                                             </td>
                                         </tr>
@@ -73,11 +73,11 @@
                         <div class="mt-3">
                             <p class="text-muted">
                                 <i class="bi bi-info-circle"></i>
-                                Total : <strong>{{ count($films) }}</strong> film(s)
+                                Total: <strong>{{ count($films) }}</strong> film(s)
                             </p>
                             <p class="text-muted">
                                 <i class="bi bi-hand-index"></i>
-                                Cliquez sur un film pour voir ses DVDs
+                                Click on a film to view its DVDs
                             </p>
                         </div>
                     @endif
@@ -87,21 +87,21 @@
     </div>
 </div>
 
-<!-- Modal pour ajouter un DVD -->
+<!-- Modal: Add a DVD -->
 <div class="modal fade" id="addDvdModal" tabindex="-1" aria-labelledby="addDvdModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="{{ route('dvds.store') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addDvdModalLabel">Ajouter un DVD</h5>
+                    <h5 class="modal-title" id="addDvdModalLabel">Add a DVD</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="filmId" id="modalFilmId">
 
                     <div class="mb-3">
-                        <label class="form-label"><strong>Film :</strong></label>
+                        <label class="form-label"><strong>Film:</strong></label>
                         <p id="modalFilmTitle" class="text-muted"></p>
                     </div>
 
@@ -111,10 +111,10 @@
                                 id="storeId"
                                 name="storeId"
                                 required>
-                            <option value="">-- Sélectionner un store --</option>
+                            <option value="">-- Select a store --</option>
                             @foreach($stores as $store)
                                 <option value="{{ $store['storeId'] ?? $store['id'] }}">
-                                    Store #{{ $store['storeId'] ?? $store['id'] }} - {{ $store['address'] ?? 'Adresse non disponible' }}
+                                    Store #{{ $store['storeId'] ?? $store['id'] }} - {{ $store['address'] ?? 'Address not available' }}
                                 </option>
                             @endforeach
                         </select>
@@ -124,9 +124,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Ajouter
+                        <i class="bi bi-plus-circle"></i> Add
                     </button>
                 </div>
             </form>
@@ -138,7 +138,7 @@
 
 @section('scripts')
 <script>
-    // Script pour peupler le modal avec les données du film
+    // Populate the modal with the selected film's data
     document.addEventListener('DOMContentLoaded', function() {
         const addDvdModal = document.getElementById('addDvdModal');
 

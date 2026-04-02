@@ -139,11 +139,13 @@ class ToadInventoryService
                 $headers['Authorization'] = "Bearer {$token}";
             }
 
-            Log::info('Mise à jour inventory via API', ['url' => $url, 'data' => $data]);
+            Log::info('Mise à jour inventory via API', ['url' => $url, 'id' => $inventoryId, 'data' => $data]);
 
             $response = Http::withHeaders($headers)
                 ->timeout(10)
                 ->put($url, $data);
+
+            Log::info('Réponse API update inventory', ['status' => $response->status(), 'body' => $response->body()]);
 
             if ($response->successful()) {
                 Log::info('Inventory mis à jour avec succès', ['response' => $response->json()]);

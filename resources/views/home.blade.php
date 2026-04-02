@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                    {{ __('Logged in! You can now access the rest of the app using the navigation menu above.') }}
                 </div>
             </div>
         </div>

@@ -135,7 +135,12 @@ class InventoryController extends Controller
             abort(404, 'DVD non trouvé');
         }
 
-        $updatedInventory = $this->inventoryService->updateInventory($inventoryId, $validatedData);
+        $payload = [
+            'filmId'  => (int) $inventory['filmId'],
+            'storeId' => (int) $validatedData['storeId'],
+        ];
+
+        $updatedInventory = $this->inventoryService->updateInventory($inventoryId, $payload);
 
         if ($updatedInventory) {
             return redirect()

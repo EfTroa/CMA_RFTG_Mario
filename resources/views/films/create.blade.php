@@ -6,9 +6,9 @@
         <div class="col-md-10">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Ajouter un nouveau film</h5>
+                    <h5 class="mb-0">Add a New Film</h5>
                     <a href="{{ route('films.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                        <i class="bi bi-arrow-left"></i> Back to List
                     </a>
                 </div>
 
@@ -18,21 +18,21 @@
 
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label for="title" class="form-label">Titre <span class="text-danger">*</span></label>
+                                <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
                                 <input type="text"
                                        class="form-control @error('title') is-invalid @enderror"
                                        id="title"
                                        name="title"
                                        value="{{ old('title') }}"
                                        required
-                                       placeholder="Entrez le titre du film">
+                                       placeholder="Enter the film title">
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="releaseYear" class="form-label">Année de sortie <span class="text-danger">*</span></label>
+                                <label for="releaseYear" class="form-label">Release Year <span class="text-danger">*</span></label>
                                 <input type="number"
                                        class="form-control @error('releaseYear') is-invalid @enderror"
                                        id="releaseYear"
@@ -54,7 +54,7 @@
                                       id="description"
                                       name="description"
                                       rows="4"
-                                      placeholder="Décrivez le film...">{{ old('description') }}</textarea>
+                                      placeholder="Describe the film...">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -62,12 +62,12 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="languageId" class="form-label">Langue <span class="text-danger">*</span></label>
+                                <label for="languageId" class="form-label">Language <span class="text-danger">*</span></label>
                                 <select class="form-select @error('languageId') is-invalid @enderror"
                                         id="languageId"
                                         name="languageId"
                                         required>
-                                    <option value="">-- Choisir une langue --</option>
+                                    <option value="">-- Select a language --</option>
                                     @foreach($languages as $id => $name)
                                         <option value="{{ $id }}" {{ old('languageId', 1) == $id ? 'selected' : '' }}>
                                             {{ $name }}
@@ -80,7 +80,7 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="length" class="form-label">Durée (minutes)</label>
+                                <label for="length" class="form-label">Duration (minutes)</label>
                                 <input type="number"
                                        class="form-control @error('length') is-invalid @enderror"
                                        id="length"
@@ -95,11 +95,11 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="rating" class="form-label">Note</label>
+                                <label for="rating" class="form-label">Rating</label>
                                 <select class="form-select @error('rating') is-invalid @enderror"
                                         id="rating"
                                         name="rating">
-                                    <option value="">-- Choisir --</option>
+                                    <option value="">-- Select --</option>
                                     <option value="G" {{ old('rating') == 'G' ? 'selected' : '' }}>G</option>
                                     <option value="PG" {{ old('rating') == 'PG' ? 'selected' : '' }}>PG</option>
                                     <option value="PG-13" {{ old('rating') == 'PG-13' ? 'selected' : '' }}>PG-13</option>
@@ -114,7 +114,7 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="rentalDuration" class="form-label">Durée de location (jours) <span class="text-danger">*</span></label>
+                                <label for="rentalDuration" class="form-label">Rental Duration (days) <span class="text-danger">*</span></label>
                                 <input type="number"
                                        class="form-control @error('rentalDuration') is-invalid @enderror"
                                        id="rentalDuration"
@@ -124,14 +124,14 @@
                                        max="30"
                                        required
                                        placeholder="3">
-                                <small class="form-text text-muted">Nombre de jours de location (par défaut: 3)</small>
+                                <small class="form-text text-muted">Number of rental days (default: 3)</small>
                                 @error('rentalDuration')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="rentalRate" class="form-label">Tarif de location (€) <span class="text-danger">*</span></label>
+                                <label for="rentalRate" class="form-label">Rental Rate ($) <span class="text-danger">*</span></label>
                                 <input type="number"
                                        class="form-control @error('rentalRate') is-invalid @enderror"
                                        id="rentalRate"
@@ -147,7 +147,7 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="replacementCost" class="form-label">Coût de remplacement (€) <span class="text-danger">*</span></label>
+                                <label for="replacementCost" class="form-label">Replacement Cost ($) <span class="text-danger">*</span></label>
                                 <input type="number"
                                        class="form-control @error('replacementCost') is-invalid @enderror"
                                        id="replacementCost"
@@ -165,7 +165,7 @@
 
                         <div class="row">
                             <div class="col-md-12 mb-3">
-                                <label for="specialFeatures" class="form-label">Caractéristiques spéciales</label>
+                                <label for="specialFeatures" class="form-label">Special Features</label>
                                 <select class="form-select @error('specialFeatures') is-invalid @enderror"
                                         id="specialFeatures"
                                         name="specialFeatures[]"
@@ -177,7 +177,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <small class="form-text text-muted">Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs options</small>
+                                <small class="form-text text-muted">Hold Ctrl (or Cmd on Mac) to select multiple options</small>
                                 @error('specialFeatures')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -188,10 +188,10 @@
 
                         <div class="d-flex gap-2 justify-content-end">
                             <a href="{{ route('films.index') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Annuler
+                                <i class="bi bi-x-circle"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Créer le film
+                                <i class="bi bi-check-circle"></i> Create Film
                             </button>
                         </div>
                     </form>

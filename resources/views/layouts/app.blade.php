@@ -38,12 +38,22 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('films.*') ? 'active' : '' }}" href="{{ route('films.index') }}">
-                                    Gestion du catalogue de films
+                                    Film Catalogue Management
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('dvds.*') ? 'active' : '' }}" href="{{ route('dvds.index') }}">
-                                    Gestion des stocks DVD
+                                    DVD Stock Management
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}" href="{{ route('customers.index') }}">
+                                    Customers Management
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('rentals.*') ? 'active' : '' }}" href="{{ route('rentals.index') }}">
+                                    Rentals Management
                                 </a>
                             </li>
                         @endauth
@@ -89,12 +99,12 @@
         </nav>
 
         <main class="py-4">
-            <!-- Messages flash -->
+            <!-- Flash messages -->
             <div class="container">
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle-fill"></i>
-                        <strong>Succès !</strong> {{ session('success') }}
+                        <strong>Success!</strong> {{ session('success') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -102,7 +112,7 @@
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        <strong>Erreur !</strong> {{ session('error') }}
+                        <strong>Error!</strong> {{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -110,7 +120,7 @@
                 @if(session('info'))
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="bi bi-info-circle-fill"></i>
-                        <strong>Information :</strong> {{ session('info') }}
+                        <strong>Information:</strong> {{ session('info') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -118,7 +128,7 @@
                 @if(session('warning'))
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-circle-fill"></i>
-                        <strong>Attention !</strong> {{ session('warning') }}
+                        <strong>Warning!</strong> {{ session('warning') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif

@@ -40,8 +40,7 @@ Route::middleware('auth')->group(function () {
 
     // Routes Customers
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-    Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
-    Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+    Route::post('/customers/data', [CustomerController::class, 'getData'])->name('customers.data');
     Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
     Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
@@ -49,7 +48,10 @@ Route::middleware('auth')->group(function () {
 
     // Routes Rentals
     Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
+    Route::get('/rentals/create', [RentalController::class, 'create'])->name('rentals.create');
+    Route::post('/rentals', [RentalController::class, 'store'])->name('rentals.store');
     Route::put('/rentals/{id}/status', [RentalController::class, 'updateStatus'])->name('rentals.updateStatus');
+    Route::delete('/rentals/{id}', [RentalController::class, 'destroy'])->name('rentals.destroy');
 
     // Routes DVDs (Inventory management)
     // Liste des films avec gestion DVD

@@ -4,7 +4,8 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card">
+            {{-- Fiche client --}}
+            <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Customer Details</h5>
                     <a href="{{ route('customers.index') }}" class="btn btn-secondary btn-sm">
@@ -13,13 +14,6 @@
                 </div>
 
                 <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
-
                     <div class="row mb-3">
                         <div class="col-md-8">
                             <h3>{{ $customer['firstName'] ?? '' }} {{ $customer['lastName'] ?? '' }}</h3>
@@ -81,6 +75,72 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Historique des locations --}}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history"></i> Rental History
+                        <span class="badge bg-secondary ms-2">{{ count($rentalHistory) }}</span>
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    @if(empty($rentalHistory))
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle"></i>
+                            No rental history for this customer.
+                        </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Rental ID</th>
+                                        <th>Inventory (ID)</th>
+                                        <th>Rental Date</th>
+                                        <th>Return Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($rentalHistory as $rental)
+                                        <tr>
+                                            <td>{{ $rental['rentalId'] ?? 'N/A' }}</td>
+                                            <td>{{ $rental['inventoryId'] ?? 'N/A' }}</td>
+                                            <td>
+                                                @if(!empty($rental['rentalDate']))
+                                                    {{ \Carbon\Carbon::parse($rental['rentalDate'])->format('d/m/Y H:i') }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!empty($rental['returnDate']))
+                                                    {{ \Carbon\Carbon::parse($rental['returnDate'])->format('d/m/Y H:i') }}
+                                                @else
+                                                    <span class="text-muted">—</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @php $sid = $rental['statusId'] ?? null; @endphp
+                                                @if($sid == 3)
+                                                    <span class="badge bg-primary">En cours</span>
+                                                @elseif($sid == 1)
+                                                    <span class="badge bg-success">Terminé</span>
+                                                @else
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

@@ -3,92 +3,74 @@
 namespace App\Http\Controllers;
 
 use App\Services\ToadCustomerService;
+use App\Services\ToadRentalService;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
     private ToadCustomerService $customerService;
+    private ToadRentalService $rentalService;
 
-    public function __construct(ToadCustomerService $customerService)
+    public function __construct(ToadCustomerService $customerService, ToadRentalService $rentalService)
     {
         $this->middleware('auth');
         $this->customerService = $customerService;
+        $this->rentalService   = $rentalService;
     }
 
     public function index()
     {
-        $customers = $this->customerService->getAllCustomers();
+        return view('customers.index', ['allowedLimits' => [10, 20, 50]]);
+    }
 
-        return view('customers.index', [
-            'customers' => $customers ?? []
+    public function getData(Request $request)
+    {
+        $validated = $request->validate([
+            'page'  => 'integer|min:1',
+            'limit' => 'integer|min:1|max:100',
+        ]);
+
+        $page  = (int) ($validated['page'] ?? 1);
+        $limit = (int) ($validated['limit'] ?? 10);
+
+        $all   = $this->customerService->getAllCustomers() ?? [];
+        $total = count($all);
+        $totalPages = $limit > 0 ? (int) ceil($total / $limit) : 1;
+        $customers  = array_slice($all, ($page - 1) * $limit, $limit);
+
+        return response()->json([
+            'customers'      => $customers,
+            'totalCustomers' => $total,
+            'totalPages'     => max(1, $totalPages),
+            'currentPage'    => $page,
         ]);
     }
 
     public function show($id)
     {
-        $customer = $this->customerService->getCustomerById($id);
+        $customer = $this->customerService->getCustomerById((int) $id);
 
         if (!$customer) {
             abort(404, 'Client non trouvé');
         }
 
+        $rentalHistory = $this->rentalService->getRentalHistory((int) $id) ?? [];
+
         return view('customers.show', [
-            'customer' => $customer
+            'customer'      => $customer,
+            'rentalHistory' => $rentalHistory,
         ]);
-    }
-
-    public function create()
-    {
-        return view('customers.create');
-    }
-
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'firstName'  => 'required|string|max:45',
-            'lastName'   => 'required|string|max:45',
-            'email'      => 'required|email|max:50',
-            'password'   => 'required|string|min:4|max:255',
-            'storeId'    => 'required|integer|min:1',
-            'addressId'  => 'required|integer|min:1',
-        ], [
-            'firstName.required'  => 'Le prénom est obligatoire.',
-            'lastName.required'   => 'Le nom est obligatoire.',
-            'email.required'      => 'L\'adresse email est obligatoire.',
-            'email.email'         => 'L\'adresse email n\'est pas valide.',
-            'password.required'   => 'Le mot de passe est obligatoire.',
-            'password.min'        => 'Le mot de passe doit comporter au moins 4 caractères.',
-            'storeId.required'    => 'L\'identifiant du magasin est obligatoire.',
-            'addressId.required'  => 'L\'identifiant de l\'adresse est obligatoire.',
-        ]);
-
-        $validatedData['active'] = $request->has('active');
-
-        $newCustomer = $this->customerService->createCustomer($validatedData);
-
-        if ($newCustomer) {
-            return redirect()
-                ->route('customers.show', $newCustomer['customerId'])
-                ->with('success', 'Client créé avec succès !');
-        }
-
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', 'Erreur lors de la création du client. Veuillez réessayer.');
     }
 
     public function edit($id)
     {
-        $customer = $this->customerService->getCustomerById($id);
+        $customer = $this->customerService->getCustomerById((int) $id);
 
         if (!$customer) {
             abort(404, 'Client non trouvé');
         }
 
-        return view('customers.edit', [
-            'customer' => $customer
-        ]);
+        return view('customers.edit', ['customer' => $customer]);
     }
 
     public function update(Request $request, $id)
@@ -111,18 +93,16 @@ class CustomerController extends Controller
 
         $validatedData['active'] = $request->has('active');
 
-        // Ne pas envoyer le mot de passe s'il est vide
         if (empty($validatedData['password'])) {
             unset($validatedData['password']);
         }
 
-        // Récupérer le createDate original pour ne pas l'écraser avec NULL
         $original = $this->customerService->getCustomerById((int) $id);
         if ($original && isset($original['createDate'])) {
             $validatedData['createDate'] = $original['createDate'];
         }
 
-        $updatedCustomer = $this->customerService->updateCustomer($id, $validatedData);
+        $updatedCustomer = $this->customerService->updateCustomer((int) $id, $validatedData);
 
         if ($updatedCustomer) {
             return redirect()
@@ -138,7 +118,17 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        $success = $this->customerService->deleteCustomer($id);
+        // The DB has FK RESTRICT on rental.customer_id → customer.customer_id with no CASCADE.
+        // We must delete the customer's rentals first or Toad returns 403 (FK violation
+        // causes Spring Boot to forward to /error which is blocked by Spring Security).
+        $rentals = $this->rentalService->getRentalHistory((int) $id) ?? [];
+        foreach ($rentals as $rental) {
+            if (!empty($rental['rentalId'])) {
+                $this->rentalService->deleteRental((int) $rental['rentalId']);
+            }
+        }
+
+        $success = $this->customerService->deleteCustomer((int) $id);
 
         if ($success) {
             return redirect()
@@ -148,6 +138,6 @@ class CustomerController extends Controller
 
         return redirect()
             ->back()
-            ->with('error', 'Erreur lors de la suppression du client. Veuillez réessayer.');
+            ->with('error', 'Impossible de supprimer ce client. Il possède peut-être des locations avec statut "panier" qui n\'ont pas pu être supprimées automatiquement.');
     }
 }

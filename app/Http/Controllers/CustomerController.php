@@ -79,7 +79,6 @@ class CustomerController extends Controller
             'firstName'  => 'required|string|max:45',
             'lastName'   => 'required|string|max:45',
             'email'      => 'required|email|max:50',
-            'password'   => 'nullable|string|min:4|max:255',
             'storeId'    => 'required|integer|min:1',
             'addressId'  => 'required|integer|min:1',
         ], [
@@ -92,10 +91,6 @@ class CustomerController extends Controller
         ]);
 
         $validatedData['active'] = $request->has('active');
-
-        if (empty($validatedData['password'])) {
-            unset($validatedData['password']);
-        }
 
         $original = $this->customerService->getCustomerById((int) $id);
         if ($original && isset($original['createDate'])) {

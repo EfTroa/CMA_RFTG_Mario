@@ -5,11 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header">
                     <h5 class="mb-0">Rental Management</h5>
-                    <a href="{{ route('rentals.create') }}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-plus-circle"></i> New Rental
-                    </a>
                 </div>
 
                 <div class="card-body">

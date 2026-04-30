@@ -61,20 +61,6 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">New Password</label>
-                            <input type="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   id="password"
-                                   name="password"
-                                   minlength="4"
-                                   placeholder="Leave blank to keep current password">
-                            <small class="form-text text-muted">Leave blank to keep the current password.</small>
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="storeId" class="form-label">Store ID <span class="text-danger">*</span></label>

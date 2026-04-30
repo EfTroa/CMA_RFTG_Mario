@@ -205,12 +205,11 @@ class ToadRentalService
 
     private function getUserToken(): ?string
     {
-        $staticToken = config('services.toad.token');
-        if (!empty($staticToken)) {
-            return $staticToken;
+        $userData = session('toad_user');
+        if (!empty($userData['token'])) {
+            return $userData['token'];
         }
 
-        $userData = session('toad_user');
-        return $userData['token'] ?? null;
+        return config('services.toad.token') ?: null;
     }
 }

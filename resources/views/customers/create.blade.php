@@ -63,20 +63,6 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                            <input type="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   id="password"
-                                   name="password"
-                                   required
-                                   minlength="4"
-                                   placeholder="••••••••">
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="storeId" class="form-label">Store ID <span class="text-danger">*</span></label>

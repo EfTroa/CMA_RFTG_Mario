@@ -152,7 +152,7 @@ class ToadCustomerService
             $data['lastUpdate'] = now()->format('Y-m-d\TH:i:s');
 
             if (!empty($data['password'])) {
-                $data['password'] = md5($data['password']);
+                $data['password'] = md5($data['password']); // ligne à commenter pour désactiver le hachage MD5 côté client
             }
 
             Log::info('Création customer via API', ['url' => $url, 'data' => $data]);
@@ -192,7 +192,7 @@ class ToadCustomerService
             $data['lastUpdate'] = now()->format('Y-m-d\TH:i:s');
 
             if (!empty($data['password'])) {
-                $data['password'] = md5($data['password']);
+                $data['password'] = md5($data['password']); // ligne à commenter pour désactiver le hachage MD5 côté client
             }
 
             Log::info('Mise à jour customer via API', ['url' => $url, 'data' => $data]);

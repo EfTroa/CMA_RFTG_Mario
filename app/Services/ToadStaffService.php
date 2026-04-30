@@ -30,7 +30,8 @@ class ToadStaffService
             'storeId'    => $data['store_id'] ?? 1,
             'active'     => true,
             'username'   => $data['username'],
-            'password'   => hash('sha256', $data['password']),
+            // 'password'   => hash('sha256', $data['password']), // hachage SHA-256 désactivé
+            'password'   => $data['password'],
             'lastUpdate' => now()->toIso8601String(),
         ];
 

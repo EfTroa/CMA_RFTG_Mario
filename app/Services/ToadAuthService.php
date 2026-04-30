@@ -21,7 +21,8 @@ class ToadAuthService
         $url = $this->baseUrl . '/staffs/verify';
         $body = [
             'email' => $email,
-            'password' => hash('sha256', $password)
+            // 'password' => hash('sha256', $password), // hachage SHA-256 désactivé
+            'password' => $password
         ];
 
         try {
